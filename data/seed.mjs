@@ -87,6 +87,17 @@ export const authors = [
     bio: "Stoic philosopher whose writing focused on time, self-command, and the habits that shape character.",
     spotlight: "His lines are compact, practical, and still surprisingly modern.",
   },
+  {
+    id: 9,
+    name: "Martin Luther King Jr.",
+    birth_year: 1929,
+    death_year: 1968,
+    nationality: "American",
+    portrait_url:
+      "https://upload.wikimedia.org/wikipedia/commons/0/05/Martin_Luther_King%2C_Jr..jpg",
+    bio: "Minister and civil rights leader whose public voice joined moral conviction, strategic action, and hope.",
+    spotlight: "His quotes make common searches like faith and justice return meaningful results instead of empty states.",
+  },
 ];
 
 export const categories = [
@@ -290,5 +301,21 @@ export const quotes = [
     author_id: 8,
     category_id: 2,
     context_year: 64,
+  },
+  {
+    id: 25,
+    quote: "Faith is taking the first step even when you don't see the whole staircase.",
+    likes: 990,
+    author_id: 9,
+    category_id: 6,
+    context_year: 1962,
+  },
+  {
+    id: 26,
+    quote: "The time is always right to do what is right.",
+    likes: 948,
+    author_id: 9,
+    category_id: 5,
+    context_year: 1965,
   },
 ];

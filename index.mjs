@@ -66,8 +66,21 @@ function initializeDatabase() {
     );
   `);
 
-  const authorCount = db.prepare("SELECT COUNT(*) AS count FROM authors").get().count;
-  if (authorCount > 0) {
+  const counts = db
+    .prepare(`
+      SELECT
+        (SELECT COUNT(*) FROM authors) AS authorCount,
+        (SELECT COUNT(*) FROM categories) AS categoryCount,
+        (SELECT COUNT(*) FROM quotes) AS quoteCount
+    `)
+    .get();
+
+  const seedMatches =
+    counts.authorCount === authors.length &&
+    counts.categoryCount === categories.length &&
+    counts.quoteCount === quotes.length;
+
+  if (seedMatches) {
     return;
   }
 
@@ -85,6 +98,10 @@ function initializeDatabase() {
   `);
 
   const transaction = db.transaction(() => {
+    db.prepare("DELETE FROM quotes").run();
+    db.prepare("DELETE FROM authors").run();
+    db.prepare("DELETE FROM categories").run();
+
     authors.forEach((author) => insertAuthor.run(author));
     categories.forEach((category) => insertCategory.run(category));
     quotes.forEach((quote) => insertQuote.run(quote));
