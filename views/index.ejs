@@ -1,0 +1,171 @@
+<%- include("partials/header", { title }) %>
+
+<main>
+  <section class="hero-shell">
+    <div class="container py-5">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="hero-kicker">Lab 5 · Quote Finder</p>
+          <h1>Signal &amp; Spark Quote Atlas</h1>
+          <p class="hero-lead">
+            Search a curated database of memorable lines by theme, author, keyword,
+            and likes range. Every result keeps the quote centered while the author
+            details open inside a Bootstrap modal.
+          </p>
+
+          <div class="hero-stats" aria-label="Database snapshot">
+            <article class="stat-card">
+              <strong><%= metrics.quoteCount %></strong>
+              <span>Quotes Indexed</span>
+            </article>
+            <article class="stat-card">
+              <strong><%= metrics.authorCount %></strong>
+              <span>Authors</span>
+            </article>
+            <article class="stat-card">
+              <strong><%= metrics.categoryCount %></strong>
+              <span>Categories</span>
+            </article>
+            <article class="stat-card">
+              <strong><%= metrics.averageLikes %></strong>
+              <span>Avg. Likes</span>
+            </article>
+          </div>
+        </div>
+
+        <aside class="hero-feature">
+          <p class="feature-label">Most Liked Quote</p>
+          <blockquote>“<%= topQuote.quote %>”</blockquote>
+          <p class="feature-author"><%= topQuote.authorName %></p>
+
+          <div class="category-ribbon">
+            <% featuredCategories.forEach((category) => { %>
+              <span style="--accent-chip: <%= category.accent %>">
+                <%= category.name %> · <%= category.totalQuotes %>
+              </span>
+            <% }) %>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="search-shell" id="search-panel">
+    <div class="container">
+      <div class="search-card">
+        <div class="search-heading">
+          <div>
+            <p class="section-kicker">Search The Database</p>
+            <h2>Find a quote with layered filters</h2>
+          </div>
+          <a class="reset-link" href="/">Reset filters</a>
+        </div>
+
+        <form class="row g-3" method="GET" action="/">
+          <div class="col-12 col-lg-4">
+            <label class="form-label" for="keyword">Keyword</label>
+            <input class="form-control form-control-lg" id="keyword" name="keyword" type="text" placeholder="Try rise, change, courage..." value="<%= filters.keyword %>">
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-3">
+            <label class="form-label" for="categoryId">Category</label>
+            <select class="form-select form-select-lg" id="categoryId" name="categoryId">
+              <option value="">All categories</option>
+              <% filterOptions.categories.forEach((category) => { %>
+                <option value="<%= category.id %>" <%= Number(filters.categoryId) === category.id ? "selected" : "" %>>
+                  <%= category.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-3">
+            <label class="form-label" for="authorId">Author</label>
+            <select class="form-select form-select-lg" id="authorId" name="authorId">
+              <option value="">All authors</option>
+              <% filterOptions.authors.forEach((author) => { %>
+                <option value="<%= author.id %>" <%= Number(filters.authorId) === author.id ? "selected" : "" %>>
+                  <%= author.name %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="col-6 col-lg-1">
+            <label class="form-label" for="minLikes">Min Likes</label>
+            <input class="form-control form-control-lg" id="minLikes" name="minLikes" type="number" min="0" value="<%= filters.minLikes %>">
+          </div>
+
+          <div class="col-6 col-lg-1">
+            <label class="form-label" for="maxLikes">Max Likes</label>
+            <input class="form-control form-control-lg" id="maxLikes" name="maxLikes" type="number" min="0" value="<%= filters.maxLikes %>">
+          </div>
+
+          <div class="col-12 d-flex gap-3 align-items-center flex-wrap">
+            <button class="btn btn-lg btn-search" type="submit">Search Quotes</button>
+            <span class="search-hint">Category options and author names are loaded from the database.</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="results-shell">
+    <div class="container">
+      <div class="results-header">
+        <div>
+          <p class="section-kicker">Results</p>
+          <h2><%= hasSearch ? "Filtered quotes" : "All quotes in the collection" %></h2>
+        </div>
+        <div class="result-count"><%= resultCount %> match<%= resultCount === 1 ? "" : "es" %></div>
+      </div>
+
+      <% if (!results.length) { %>
+        <article class="empty-state">
+          <h3>No quotes matched those filters.</h3>
+          <p>Try widening the likes range, removing one filter, or searching a simpler keyword.</p>
+        </article>
+      <% } %>
+
+      <div class="quote-grid">
+        <% results.forEach((item) => { %>
+          <article class="quote-card" style="--card-accent: <%= item.categoryAccent %>">
+            <div class="quote-meta">
+              <span class="quote-category"><%= item.categoryName %></span>
+              <span class="quote-likes"><%= item.likes %> likes</span>
+            </div>
+            <blockquote class="quote-text">“<%= item.quote %>”</blockquote>
+            <div class="quote-footer">
+              <button
+                class="author-link"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#authorModal"
+                data-author-id="<%= item.authorId %>"
+              >
+                <%= item.authorName %>
+              </button>
+              <span class="quote-year"><%= formatYear(item.contextYear) %></span>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal fade" id="authorModal" tabindex="-1" aria-labelledby="authorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content author-modal-shell">
+      <div class="modal-header border-0">
+        <h2 class="modal-title h4" id="authorModalLabel">Author Spotlight</h2>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="authorModalBody" class="author-modal-loading">Loading author details...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("partials/footer") %>

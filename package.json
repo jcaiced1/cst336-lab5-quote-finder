@@ -1,0 +1,22 @@
+{
+  "name": "lab5-quote-finder",
+  "version": "1.0.0",
+  "description": "CST336 Lab 5 Quote Finder by Jose Caicedo",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "keywords": [
+    "express",
+    "sqlite",
+    "quotes",
+    "cst336"
+  ],
+  "author": "Jose Caicedo",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "ejs": "^5.0.1",
+    "express": "^5.1.0"
+  }
+}
