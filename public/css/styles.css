@@ -238,6 +238,28 @@ blockquote {
   font-weight: 600;
 }
 
+.keyword-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.keyword-toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--gold);
+}
+
+.likes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  align-items: start;
+}
+
 .form-control,
 .form-select {
   border-radius: 18px;
@@ -266,6 +288,15 @@ blockquote {
 .btn-search:hover,
 .btn-search:focus {
   color: #1b130d;
+}
+
+.search-error {
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 122, 89, 0.35);
+  background: rgba(255, 122, 89, 0.08);
+  color: #ffd7cb;
+  font-weight: 600;
 }
 
 .result-count {
@@ -387,11 +418,27 @@ blockquote {
   background: rgba(8, 6, 5, 0.45);
 }
 
+.footer-brand {
+  display: flex;
+  align-items: center;
+}
+
+.footer-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  padding: 0.45rem 0.7rem;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
 .footer-meta {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
   color: var(--muted);
+  justify-content: flex-end;
 }
 
 @media (max-width: 991px) {
@@ -432,5 +479,15 @@ blockquote {
   .hero-feature,
   .search-card {
     padding: 1.35rem;
+  }
+
+  .footer-meta {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 575px) {
+  .likes-grid {
+    grid-template-columns: 1fr;
   }
 }

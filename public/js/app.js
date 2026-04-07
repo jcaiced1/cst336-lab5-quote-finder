@@ -20,9 +20,10 @@ if (authorModal && modalBody) {
       }
 
       const author = await response.json();
+      const safePortrait = author.portraitUrl || author.fallbackPortraitUrl;
       modalBody.innerHTML = `
         <article class="author-profile">
-          <img src="${author.portraitUrl}" alt="${author.name} portrait">
+          <img src="${safePortrait}" alt="${author.name} portrait" data-fallback-src="${author.fallbackPortraitUrl}">
           <div>
             <p class="section-kicker">Author Profile</p>
             <h3>${author.name}</h3>
@@ -37,6 +38,17 @@ if (authorModal && modalBody) {
           </div>
         </article>
       `;
+
+      const portrait = modalBody.querySelector("img[data-fallback-src]");
+      if (portrait) {
+        portrait.addEventListener(
+          "error",
+          () => {
+            portrait.src = portrait.dataset.fallbackSrc;
+          },
+          { once: true }
+        );
+      }
     } catch (error) {
       modalBody.textContent = "Unable to load this author right now.";
     }

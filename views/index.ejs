@@ -8,9 +8,7 @@
           <p class="hero-kicker">Lab 5 · Quote Finder</p>
           <h1>Signal &amp; Spark Quote Atlas</h1>
           <p class="hero-lead">
-            Search a curated database of memorable lines by theme, author, keyword,
-            and likes range. Every result keeps the quote centered while the author
-            details open inside a Bootstrap modal.
+            Search quotes by keyword, category, author, or likes.
           </p>
 
           <div class="hero-stats" aria-label="Database snapshot">
@@ -61,10 +59,14 @@
           <a class="reset-link" href="/">Reset filters</a>
         </div>
 
-        <form class="row g-3" method="GET" action="/">
+        <form class="row g-3" method="GET" action="/#search-panel">
           <div class="col-12 col-lg-4">
             <label class="form-label" for="keyword">Keyword</label>
             <input class="form-control form-control-lg" id="keyword" name="keyword" type="text" placeholder="Try rise, change, courage..." value="<%= filters.keyword %>">
+            <label class="keyword-toggle">
+              <input type="checkbox" name="keywordTextOnly" <%= filters.keywordTextOnly ? "checked" : "" %>>
+              <span>Only quotes that contain this keyword</span>
+            </label>
           </div>
 
           <div class="col-12 col-md-6 col-lg-3">
@@ -91,20 +93,29 @@
             </select>
           </div>
 
-          <div class="col-6 col-lg-1">
-            <label class="form-label" for="minLikes">Min Likes</label>
-            <input class="form-control form-control-lg" id="minLikes" name="minLikes" type="number" min="0" value="<%= filters.minLikes %>">
-          </div>
-
-          <div class="col-6 col-lg-1">
-            <label class="form-label" for="maxLikes">Max Likes</label>
-            <input class="form-control form-control-lg" id="maxLikes" name="maxLikes" type="number" min="0" value="<%= filters.maxLikes %>">
+          <div class="col-12 col-lg-2">
+            <div class="likes-grid">
+              <div>
+                <label class="form-label" for="minLikes">Min Likes</label>
+                <input class="form-control form-control-lg" id="minLikes" name="minLikes" type="number" min="<%= metrics.minLikes %>" max="<%= metrics.maxLikes %>" placeholder="<%= metrics.minLikes %>" value="<%= filters.minLikes %>">
+              </div>
+              <div>
+                <label class="form-label" for="maxLikes">Max Likes</label>
+                <input class="form-control form-control-lg" id="maxLikes" name="maxLikes" type="number" min="<%= metrics.minLikes %>" max="<%= metrics.maxLikes %>" placeholder="<%= metrics.maxLikes %>" value="<%= filters.maxLikes %>">
+              </div>
+            </div>
           </div>
 
           <div class="col-12 d-flex gap-3 align-items-center flex-wrap">
             <button class="btn btn-lg btn-search" type="submit">Search Quotes</button>
-            <span class="search-hint">Category options and author names are loaded from the database.</span>
+            <span class="search-hint">Category options and author names are loaded from the database. Likes currently range from <%= metrics.minLikes %> to <%= metrics.maxLikes %>.</span>
           </div>
+
+          <% if (validationError) { %>
+            <div class="col-12">
+              <div class="search-error"><%= validationError %></div>
+            </div>
+          <% } %>
         </form>
       </div>
     </div>
@@ -115,41 +126,48 @@
       <div class="results-header">
         <div>
           <p class="section-kicker">Results</p>
-          <h2><%= hasSearch ? "Filtered quotes" : "All quotes in the collection" %></h2>
+          <h2><%= hasSearch ? "Filtered quotes" : "Start with a filter" %></h2>
         </div>
         <div class="result-count"><%= resultCount %> match<%= resultCount === 1 ? "" : "es" %></div>
       </div>
 
-      <% if (!results.length) { %>
+      <% if (!hasSearch) { %>
+        <article class="empty-state">
+          <h3>Use at least one filter to search the archive.</h3>
+          <p>Pick a keyword, category, author, likes range, or a combination before searching.</p>
+        </article>
+      <% } else if (!results.length) { %>
         <article class="empty-state">
           <h3>No quotes matched those filters.</h3>
           <p>Try widening the likes range, removing one filter, or searching a simpler keyword.</p>
         </article>
       <% } %>
 
-      <div class="quote-grid">
-        <% results.forEach((item) => { %>
-          <article class="quote-card" style="--card-accent: <%= item.categoryAccent %>">
-            <div class="quote-meta">
-              <span class="quote-category"><%= item.categoryName %></span>
-              <span class="quote-likes"><%= item.likes %> likes</span>
-            </div>
-            <blockquote class="quote-text">“<%= item.quote %>”</blockquote>
-            <div class="quote-footer">
-              <button
-                class="author-link"
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#authorModal"
-                data-author-id="<%= item.authorId %>"
-              >
-                <%= item.authorName %>
-              </button>
-              <span class="quote-year"><%= formatYear(item.contextYear) %></span>
-            </div>
-          </article>
-        <% }) %>
-      </div>
+      <% if (results.length) { %>
+        <div class="quote-grid">
+          <% results.forEach((item) => { %>
+            <article class="quote-card" style="--card-accent: <%= item.categoryAccent %>">
+              <div class="quote-meta">
+                <span class="quote-category"><%= item.categoryName %></span>
+                <span class="quote-likes"><%= item.likes %> likes</span>
+              </div>
+              <blockquote class="quote-text">“<%= item.quote %>”</blockquote>
+              <div class="quote-footer">
+                <button
+                  class="author-link"
+                  type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#authorModal"
+                  data-author-id="<%= item.authorId %>"
+                >
+                  <%= item.authorName %>
+                </button>
+                <span class="quote-year"><%= formatYear(item.contextYear) %></span>
+              </div>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
     </div>
   </section>
 </main>
