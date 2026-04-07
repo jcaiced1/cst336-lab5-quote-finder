@@ -34,7 +34,6 @@ if (authorModal && modalBody) {
               <span>${author.highestLikes} top likes</span>
             </div>
             <p>${author.bio}</p>
-            <p><strong>Why this author matters here:</strong> ${author.spotlight}</p>
           </div>
         </article>
       `;
