@@ -21,6 +21,9 @@ if (authorModal && modalBody) {
 
       const author = await response.json();
       const safePortrait = author.portraitUrl || author.fallbackPortraitUrl;
+      const dateBadge = author.displayYears === "Dates unavailable"
+        ? ""
+        : `<span>${author.displayYears}</span>`;
       modalBody.innerHTML = `
         <article class="author-profile">
           <img src="${safePortrait}" alt="${author.name} portrait" data-fallback-src="${author.fallbackPortraitUrl}">
@@ -29,7 +32,7 @@ if (authorModal && modalBody) {
             <h3>${author.name}</h3>
             <div class="author-facts">
               <span>${author.nationality}</span>
-              <span>${author.displayYears}</span>
+              ${dateBadge}
               <span>${author.quoteCount} quotes in database</span>
               <span>${author.highestLikes} top likes</span>
             </div>
