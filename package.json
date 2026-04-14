@@ -16,7 +16,9 @@
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.5",
     "ejs": "^5.0.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mysql2": "^3.11.3"
   }
 }
